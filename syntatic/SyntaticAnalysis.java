@@ -478,7 +478,7 @@ public class SyntaticAnalysis {
             current.type == TokenType.LOWER_EQUAL ||
             current.type == TokenType.GREATER_EQUAL ||
             current.type == TokenType.EQUALS ||
-            current.type == TokenType.NOT_EQUAL ||
+            current.type == TokenType.NOT_EQUALS ||
             current.type == TokenType.CONTAINS ||
             current.type == TokenType.NOT_CONTAINS
         ) {
@@ -505,7 +505,7 @@ public class SyntaticAnalysis {
                     advance();
                     op = BinaryExpr.Op.EqualOp;
                     break;
-                case NOT_EQUAL:
+                case NOT_EQUALS:
                     advance();
                     op = BinaryExpr.Op.NotEqualOp;
                     break;
