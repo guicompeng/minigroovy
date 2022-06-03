@@ -38,7 +38,7 @@ public class SymbolTable {
         st.put("<=", TokenType.LOWER_EQUAL);
         st.put(">=", TokenType.GREATER_EQUAL);
         st.put("==", TokenType.EQUALS);
-        st.put("!=", TokenType.NOT_EQUAL);
+        st.put("!=", TokenType.NOT_EQUALS);
         st.put("in", TokenType.CONTAINS);
         st.put("!in", TokenType.NOT_CONTAINS);
         st.put("+", TokenType.ADD);

@@ -34,7 +34,7 @@ public enum TokenType {
     LOWER_EQUAL,   // <=
     GREATER_EQUAL, // >=
     EQUALS,        // ==
-    NOT_EQUAL,    // !=
+    NOT_EQUALS,    // !=
     CONTAINS,      // in
     NOT_CONTAINS,  // !in
     ADD,           // +

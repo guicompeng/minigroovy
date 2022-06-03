@@ -14,6 +14,7 @@ import interpreter.command.ForCommand;
 import interpreter.command.IfCommand;
 import interpreter.command.PrintCommand;
 import interpreter.command.WhileCommand;
+import interpreter.expr.AccessExpr;
 import interpreter.expr.BinaryExpr;
 import interpreter.expr.CastExpr;
 import interpreter.expr.ConstExpr;
@@ -146,16 +147,16 @@ public class SyntaticAnalysis {
                 cmd = pc;
                 break;
             case IF:
-                IfCommand pi = procIf();
-                cmd = pi;
+            IfCommand pi = procIf();
+            cmd = pi;
                 break;
             case WHILE:
                 WhileCommand wc = procWhile();
                 cmd = wc;
                 break;
             case FOR:
-                ForCommand fc = procFor();
-                cmd = fc;
+            ForCommand fc = procFor();
+            cmd = fc;
                 break;
             case FOREACH:
                 procForeach();
@@ -322,7 +323,7 @@ public class SyntaticAnalysis {
         return wc;
     }
 
-    // <for> ::= for '(' [ ( <def> | <assign> ) { ',' ( <def> | <assign> ) } ] ';' [ <expr> ] ';' [ <assign> { ',' <assign> } ] ')' <body>
+    // <for> ::= for '(' [ [ def ] <assign> { ',' <assign> } ] ] ';' <expr> ';' [ <assign> { ',' <assign> } ] ')' <body>
     private ForCommand procFor() {
         eat(TokenType.FOR);
         int line = lex.getLine();
@@ -684,12 +685,35 @@ public class SyntaticAnalysis {
     }
 
     // <lvalue> ::= <name> { '.' <name> | '[' <expr> ']' }
-    private Variable procLValue() {
-        Variable var = procName();
+    private SetExpr procLValue() {
+        SetExpr base = procName();
 
-        // TODO: Implement me!
+        while (current.type == TokenType.DOT
+                || current.type == TokenType.OPEN_BRA) {
+            Expr index;
+            int line = lex.getLine();
 
-        return var;
+            if (current.type == TokenType.DOT) {
+                advance();
+
+                Variable var = procName();
+                String name = var.getName();
+
+                TextValue tv = new TextValue(name);
+                ConstExpr ce = new ConstExpr(line, tv);
+                index = ce;
+            } else {
+                advance();
+
+                index = procExpr();
+                eat(TokenType.CLOSE_BRA);
+            }
+
+            AccessExpr ae = new AccessExpr(line, base, index);
+            base = ae;
+        }
+
+        return base;
     }
 
     // <rvalue> ::= <const> | <function> | <switch> | <struct> | <lvalue>
@@ -721,8 +745,8 @@ public class SyntaticAnalysis {
                 procStruct();
                 break;
             case NAME:
-                Variable var = procLValue();
-                expr = var;
+                SetExpr sexpr = procLValue();
+                expr = sexpr;
                 break;
             default:
                 showError();
